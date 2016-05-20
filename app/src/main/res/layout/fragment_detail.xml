@@ -12,8 +12,44 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/my_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:scrollbars="vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:text="Trailers"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/video_trailer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:text="Reviews"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/review_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+
+            />
+
 
     </LinearLayout>
 </ScrollView>

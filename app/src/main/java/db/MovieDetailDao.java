@@ -140,7 +140,7 @@ public class MovieDetailDao extends AbstractDao<MovieDetail, Long> {
     /** @inheritdoc */
     @Override
     public MovieDetail readEntity(Cursor cursor, int offset) {
-        MovieDetail entity = new MovieDetail( //
+        return new MovieDetail( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // posterPath
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // overview
@@ -154,7 +154,6 @@ public class MovieDetailDao extends AbstractDao<MovieDetail, Long> {
             cursor.isNull(offset + 10) ? null : cursor.getDouble(offset + 10), // voteAverage
             cursor.isNull(offset + 11) ? null : cursor.getInt(offset + 11) // voteCount
         );
-        return entity;
     }
      
     /** @inheritdoc */

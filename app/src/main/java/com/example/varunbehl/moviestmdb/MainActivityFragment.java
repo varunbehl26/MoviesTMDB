@@ -17,23 +17,21 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import db.RetrofitManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
 
-    private static String sort = "rating";
+    private static String sort = "popular";
     private static final String SORT_POPULAR = "popular";
     private static final String SORT_RATING = "top_rated";
-    static String API_BASE_URL = "http://api.themoviedb.org/";
-    static String API_KEY = "API_KEY";
-
+    static String API_KEY = "29c90a4aee629499a2149041cc6a0ffd";
+    private RetrofitManager retrofitManager;
     private List<Pictures> movieList = new ArrayList<>();
     private ImageAdapter imageAdapter;
     GridView gridView;
@@ -44,6 +42,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        retrofitManager = RetrofitManager.getInstance();
         setHasOptionsMenu(true);
     }
 
@@ -51,14 +50,9 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
         imageAdapter = new ImageAdapter(getContext(), movieList);
-
         gridView = (GridView) rootView.findViewById(R.id.gridview);
-
         getData();
-
-
         return rootView;
     }
 
@@ -95,17 +89,12 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void getData() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
-        MoviesInterface moviesInterface = retrofit.create(MoviesInterface.class);
         Call<Picture_Detail> call;
         if (sort.equals("rating")) {
-            call = moviesInterface.listPictures(API_KEY);
+            call = retrofitManager.getMoviesInfo(SORT_RATING, 1, API_KEY);
         } else {
-            call = moviesInterface.listPic_top(API_KEY);
+            call = retrofitManager.getMoviesInfo(SORT_POPULAR, 1, API_KEY);
         }
 
         call.enqueue(new Callback<Picture_Detail>() {
@@ -115,7 +104,6 @@ public class MainActivityFragment extends Fragment {
                     movieList = response.body().getResults();
                     imageAdapter = new ImageAdapter(getContext(), movieList);
                     imageAdapter.notifyDataSetChanged();
-
                     gridView.setAdapter(imageAdapter);
                     gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         public void onItemClick(AdapterView<?> parent, View v,
@@ -125,13 +113,11 @@ public class MainActivityFragment extends Fragment {
                             startActivity(intent);
                         }
                     });
-
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                     Log.v("Exception", "NullPointerException");
                 }
             }
-
             @Override
             public void onFailure(Call<Picture_Detail> call, Throwable t) {
                 Log.e("Error threw: ", t.getMessage());
