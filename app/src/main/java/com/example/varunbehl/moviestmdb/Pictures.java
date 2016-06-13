@@ -54,6 +54,22 @@ public class Pictures implements Parcelable {
     @Expose
     private Double voteAverage;
 
+
+    public Pictures(String posterPath, Boolean adult, String overview, String releaseDate, Integer id, String originalTitle, String originalLanguage, String backdropPath, Double popularity, Integer voteCount, Boolean video, Double voteAverage) {
+        this.posterPath = posterPath;
+        this.adult = adult;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+        this.id = id;
+        this.originalTitle = originalTitle;
+        this.originalLanguage = originalLanguage;
+        this.backdropPath = backdropPath;
+        this.popularity = popularity;
+        this.voteCount = voteCount;
+        this.video = video;
+        this.voteAverage = voteAverage;
+    }
+
     /**
      * @return The posterPath
      */

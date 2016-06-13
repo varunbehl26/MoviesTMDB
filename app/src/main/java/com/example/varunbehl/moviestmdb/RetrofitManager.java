@@ -1,16 +1,12 @@
-package db;
+package com.example.varunbehl.moviestmdb;
 
-
-import com.example.varunbehl.moviestmdb.MoviesInterface;
-import com.example.varunbehl.moviestmdb.Picture_Detail;
-
-import reviews.Reviews;
 import Video.Videos;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import reviews.Reviews;
 import rx.Observable;
 
 /**

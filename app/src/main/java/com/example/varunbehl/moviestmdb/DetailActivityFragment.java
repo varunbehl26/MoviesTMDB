@@ -1,9 +1,11 @@
 package com.example.varunbehl.moviestmdb;
 
+import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,11 +18,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.varunbehl.moviestmdb.db2.MovieDetailContract;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import Video.VideoResult;
 import Video.Videos;
-import db.RetrofitManager;
 import reviews.Reviews;
 import reviews.ReviewsResult;
 import rx.Observable;
@@ -33,9 +38,6 @@ import rx.schedulers.Schedulers;
  */
 public class DetailActivityFragment extends Fragment {
 
-    public DetailActivityFragment() {
-    }
-
     static String API_KEY = "29c90a4aee629499a2149041cc6a0ffd";
     Videos videos = new Videos();
     Reviews review = new Reviews();
@@ -43,22 +45,28 @@ public class DetailActivityFragment extends Fragment {
     DetailsAdapter detailsAdapter;
     View rootMovieView, rootView;
     RetrofitManager retrofitManager;
+    TextView review_text, trailer_text;
 
+    public DetailActivityFragment() {
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        picture = getActivity().getIntent().getExtras().getParcelable("Pictures");
+
         retrofitManager = RetrofitManager.getInstance();
         rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         rootMovieView = inflater.inflate(R.layout.movie_detail, container, false);
 
-        picture = getActivity().getIntent().getExtras().getParcelable("Pictures");
         getVideosData();
-        getReviewsData(container);
+        getReviewsData();
 
         detailsAdapter = new DetailsAdapter(picture);
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(detailsAdapter);
@@ -66,6 +74,7 @@ public class DetailActivityFragment extends Fragment {
 
         return rootView;
     }
+
 
     public void getVideosData() {
 
@@ -107,7 +116,7 @@ public class DetailActivityFragment extends Fragment {
     }
 
 
-    public void getReviewsData(final ViewGroup container) {
+    public void getReviewsData() {
 
         Observable<Reviews> reviewsObservable = retrofitManager.getComments(picture.getId(), API_KEY);
 
@@ -120,6 +129,8 @@ public class DetailActivityFragment extends Fragment {
 
                         LinearLayout review_layout = (LinearLayout) rootView.findViewById(R.id.review_comment);
 
+
+
                         for (ReviewsResult comment : review.getReviewsResults()) {
 
                             View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_movie_comments,
@@ -130,9 +141,6 @@ public class DetailActivityFragment extends Fragment {
                             TextView tvCommentContent = (TextView) view.findViewById(R.id.tv_comment_content);
 
 
-                            Log.v("comment adding", comment.getContent() + "");
-                            Log.v("comment by", comment.getAuthor() + "");
-
                             tvCommentContent.setText(comment.getContent());
                             tvCommentBy.setText(comment.getAuthor());
 
@@ -140,23 +148,22 @@ public class DetailActivityFragment extends Fragment {
                         }
                     }
 
+
                     @Override
                     public void onError(Throwable e) {
+                        review_text.setVisibility(View.INVISIBLE);
                     }
 
                     @Override
                     public void onNext(Reviews reviews) {
                         review = reviews;
-                        Log.v("reviewsList------", reviews.toString() + "");
-
                     }
                 });
-
     }
 
 
     public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.ViewHolder> {
-        public DetailsAdapter(Pictures picture) {
+        public DetailsAdapter(Pictures pictures) {
         }
 
         @Override
@@ -175,6 +182,18 @@ public class DetailActivityFragment extends Fragment {
             holder.releaseDate.setText("Released Date:" + picture.getReleaseDate() + "");
             holder.vote.setText("Rating: " + picture.getVoteAverage() + "/10");
             holder.plotSynopsis.setText(picture.getOverview());
+
+            holder.fav_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    List<Pictures> movieList = new ArrayList<Pictures>();
+                    Uri movieDataUri = MovieDetailContract.MovieEntry.buildMovieUri();
+
+                    Cursor cur = getActivity().getContentResolver().query(movieDataUri,
+                            null, null, null, null);
+                    setDataInDb(picture);
+                }
+            });
         }
 
         @Override
@@ -186,6 +205,7 @@ public class DetailActivityFragment extends Fragment {
 
             ImageView iconView;
             TextView title, releaseDate, vote, plotSynopsis;
+            Button fav_button;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -194,7 +214,28 @@ public class DetailActivityFragment extends Fragment {
                 releaseDate = (TextView) itemView.findViewById(R.id.release_date);
                 vote = (TextView) itemView.findViewById(R.id.vote);
                 plotSynopsis = (TextView) itemView.findViewById(R.id.plot_synopsis);
+                fav_button = (Button) itemView.findViewById(R.id.b11);
+
             }
         }
+
+        private void setDataInDb(Pictures pictures) {
+            ContentValues movieValues = new ContentValues();
+            movieValues.put(MovieDetailContract.MovieEntry.MOVIE_ID, pictures.getId());
+            movieValues.put(MovieDetailContract.MovieEntry.POSTER_PATH, pictures.getPosterPath());
+            movieValues.put(MovieDetailContract.MovieEntry.OVERVIEW, pictures.getOverview());
+            movieValues.put(MovieDetailContract.MovieEntry.RELEASE_DATE, pictures.getReleaseDate());
+            movieValues.put(MovieDetailContract.MovieEntry.ORIGINAL_TITLE, pictures.getOriginalTitle());
+            movieValues.put(MovieDetailContract.MovieEntry.ORIGINAL_LANGUAGE, pictures.getOriginalLanguage());
+            movieValues.put(MovieDetailContract.MovieEntry.BACKDROP_PATH, pictures.getBackdropPath());
+            movieValues.put(MovieDetailContract.MovieEntry.ADULT, pictures.getAdult());
+            movieValues.put(MovieDetailContract.MovieEntry.VIDEO, pictures.getVideo());
+            movieValues.put(MovieDetailContract.MovieEntry.POPULARITY, pictures.getPopularity());
+            movieValues.put(MovieDetailContract.MovieEntry.VOTE_AVERAGE, pictures.getVoteAverage());
+            movieValues.put(MovieDetailContract.MovieEntry.VOTE_COUNT, pictures.getVoteCount());
+
+            getContext().getContentResolver().insert(MovieDetailContract.MovieEntry.CONTENT_URI, movieValues);
+        }
+
     }
 }

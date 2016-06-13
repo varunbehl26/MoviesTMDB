@@ -1,49 +1,67 @@
 package com.example.varunbehl.moviestmdb;
-/**
- * Created by varunbehl on 02/04/16.
- */
 
 import android.content.Context;
+import android.database.Cursor;
+import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import com.example.varunbehl.moviestmdb.db2.MovieDetailContract;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
 
+class ImageAdapter extends CursorAdapter {
 
-class ImageAdapter extends ArrayAdapter<Pictures> {
-
-    public ImageAdapter(Context context, List<Pictures> objects) {
-        super(context, 0, objects);
+    public ImageAdapter(Context context, Cursor c) {
+        super(context, c);
     }
 
 
-
-
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
-        Pictures pictures = getItem(position);
+        int idx_short_desc = cursor.getColumnIndex(MovieDetailContract.MovieEntry.POSTER_PATH);
+        String poster = cursor.getString(idx_short_desc);
 
-        ImageView imageView;
-        if (convertView == null) {
-            imageView = new ImageView(getContext());
-            imageView.setScaleType(ImageView.ScaleType.FIT_START);
-        } else {
-            imageView = (ImageView) convertView;
-        }
 
-        if (!TextUtils.isEmpty(pictures.getPosterPath())) {
-            Picasso.with(getContext())
-                    .load("http://image.tmdb.org/t/p/w342" + pictures.getPosterPath())
+        ImageView imageView = new ImageView(context);
+        imageView.setScaleType(ImageView.ScaleType.FIT_START);
+
+
+        if (!TextUtils.isEmpty(poster)) {
+            Picasso.with(context)
+                    .load("http://image.tmdb.org/t/p/w342" + MovieDetailContract.MovieEntry.POSTER_PATH)
                     .placeholder(R.mipmap.ic_launcher)
                     .into(imageView);
         }
         return imageView;
+    }
+
+    @Override
+    public void bindView(View view, Context context, Cursor cursor) {
+
+        int idx_short_desc = cursor.getColumnIndex(MovieDetailContract.MovieEntry.POSTER_PATH);
+        String poster = cursor.getString(idx_short_desc);
+
+
+        ImageView imageView;
+        if (view == null) {
+            imageView = new ImageView(context);
+            imageView.setScaleType(ImageView.ScaleType.FIT_START);
+        } else {
+            imageView = (ImageView) view;
+        }
+
+        if (!TextUtils.isEmpty(poster)) {
+            Picasso.with(context)
+                    .load("http://image.tmdb.org/t/p/w342" + poster)
+                    .placeholder(R.mipmap.ic_launcher)
+                    .into(imageView);
+        }
+
+
     }
 }
 

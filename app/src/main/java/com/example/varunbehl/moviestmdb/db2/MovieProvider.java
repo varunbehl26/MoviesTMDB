@@ -1,10 +1,11 @@
-package db2;
+package com.example.varunbehl.moviestmdb.db2;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
@@ -15,6 +16,9 @@ public class MovieProvider extends ContentProvider {
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MovieDbHelper mOpenHelper;
+
+    private static final SQLiteQueryBuilder queryBuilder = null;
+
 
     static final int MOVIE = 100;
 
@@ -31,6 +35,7 @@ public class MovieProvider extends ContentProvider {
         mOpenHelper = new MovieDbHelper(getContext());
         return true;
     }
+
 
     @Nullable
     @Override
@@ -79,7 +84,7 @@ public class MovieProvider extends ContentProvider {
             case MOVIE: {
                 long _id = db.insert(MovieDetailContract.MovieEntry.TABLE_NAME, null, values);
                 if (_id > 0)
-                    returnUri = MovieDetailContract.MovieEntry.buildMovieUri(_id);
+                    returnUri = MovieDetailContract.MovieEntry.buildMovieUri();
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;

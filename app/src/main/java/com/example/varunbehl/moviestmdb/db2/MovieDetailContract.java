@@ -1,7 +1,6 @@
-package db2;
+package com.example.varunbehl.moviestmdb.db2;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -28,8 +27,8 @@ public class MovieDetailContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
 
 
-        public static final String TABLE_NAME = "MOVIE_DETAIL";
-
+        public static final String TABLE_NAME = "movies";
+        public static final String MOVIE_ID = "id";
         public static final String POSTER_PATH = "posterPath";
         public static final String OVERVIEW = "overview";
         public static final String RELEASE_DATE = "releaseDate";
@@ -42,9 +41,15 @@ public class MovieDetailContract {
         public static final String VOTE_AVERAGE = "voteAverage";
         public static final String VOTE_COUNT = "voteCount";
 
-        public static Uri buildMovieUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+
+        public static Uri buildMovieUri() {
+            return CONTENT_URI.buildUpon().build();
         }
+
+
+//        public static Uri buildMovieUri(long id) {
+//            return ContentUris.withAppendedId(CONTENT_URI, id);
+//        }
 
     }
 }
