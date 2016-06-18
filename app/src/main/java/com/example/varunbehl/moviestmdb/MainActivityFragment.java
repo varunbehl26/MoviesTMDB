@@ -1,11 +1,9 @@
 package com.example.varunbehl.moviestmdb;
 
-import android.app.Fragment;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -35,22 +33,29 @@ import retrofit2.Response;
 
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String SORT_SETTING_KEY = "sort_setting";
+    private static final String POPULARITY_DESC = "popularity.desc";
+    private static final String MOVIES_KEY = "movies";
     private static String sort = "popular";
     private static final String SORT_POPULAR = "popular";
     private static final String SORT_RATING = "top_rated";
     static String API_KEY = "29c90a4aee629499a2149041cc6a0ffd";
     private RetrofitManager retrofitManager;
     private List<Pictures> movieList = new ArrayList<>();
-    private ImageAdapter imageAdapter;
     private ImageAdapter_List imageAdapter_list;
-    SharedPreferences sharedPreferences;
+    private ImageAdapter imageAdapter;
     GridView gridView;
-    private final String MOVIE_DATA = "movie_data";
+    private ArrayList<Pictures> mMovies = null;
+    private String mSortBy = POPULARITY_DESC;
 
 
     public MainActivityFragment() {
     }
 
+
+    public interface Callback_Pictures {
+        void onMovieClicked(Pictures movie);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,15 +66,47 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (getFragmentManager().findFragmentById(R.id.movie_detail_container) != null) {
+            fetchData();
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         imageAdapter_list = new ImageAdapter_List(getActivity(), movieList);
         gridView = (GridView) rootView.findViewById(R.id.gridView1);
         fetchData();
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(SORT_SETTING_KEY)) {
+                mSortBy = savedInstanceState.getString(SORT_SETTING_KEY);
+            }
+            if (savedInstanceState.containsKey(MOVIES_KEY)) {
+                mMovies = savedInstanceState.getParcelableArrayList(MOVIES_KEY);
+                imageAdapter_list = new ImageAdapter_List(getActivity(), mMovies);
+            } else {
+                fetchData();
+            }
+        } else {
+            fetchData();
+        }
+
         return rootView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (!mSortBy.contentEquals(POPULARITY_DESC)) {
+            outState.putString(SORT_SETTING_KEY, mSortBy);
+        }
+        if (mMovies != null) {
+            outState.putParcelableArrayList(MOVIES_KEY, mMovies);
+        }
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -146,20 +183,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 imageAdapter_list = new ImageAdapter_List(getActivity(), movieList);
                 imageAdapter_list.notifyDataSetChanged();
                 gridView.setAdapter(imageAdapter_list);
-
-
                 gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> parent, View v,
-                                            int position, long id) {
-                        Pictures pictures = imageAdapter_list.getItem(position);
-                        Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra("Pictures", pictures);
-                        startActivity(intent);
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Pictures movie = imageAdapter_list.getItem(position);
+                        ((Callback_Pictures) getActivity()).onMovieClicked(movie);
                     }
                 });
-
-
                 cur1.close();
-
             }
         } else {
             getDataFromWeb();
@@ -175,27 +206,19 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         } else {
             call = retrofitManager.getMoviesInfo(SORT_POPULAR, 1, API_KEY);
         }
-
         call.enqueue(new Callback<Picture_Detail>() {
-
-
                          @Override
                          public void onResponse(Call<Picture_Detail> call, Response<Picture_Detail> response) {
                              try {
                                  movieList = response.body().getResults();
-
-
                                  imageAdapter_list = new ImageAdapter_List(getActivity(), movieList);
                                  imageAdapter_list.notifyDataSetChanged();
                                  gridView.setAdapter(imageAdapter_list);
                                  gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                     public void onItemClick(AdapterView<?> parent, View v,
-                                                             int position, long id) {
-                                         Pictures pictures = imageAdapter_list.getItem(position);
-                                         //  Cursor cursor = (Cursor) imageAdapter_list.getItem(position);
-                                         Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra("Pictures", pictures);
-                                         startActivity(intent);
-                                         //  setDataForDetailView(cursor);
+                                     @Override
+                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                         Pictures movie = imageAdapter_list.getItem(position);
+                                         ((Callback_Pictures) getActivity()).onMovieClicked(movie);
                                      }
                                  });
                              } catch (Exception e) {
@@ -203,13 +226,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                                  Log.v("Exception", "NullPointerException");
                              }
                          }
-
                          @Override
                          public void onFailure(Call<Picture_Detail> call, Throwable t) {
                              Log.e("Error threw: ", t.getMessage());
                          }
                      }
-
         );
     }
 

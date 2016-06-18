@@ -26,36 +26,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <LinearLayout
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/release_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/release_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp" />
+            android:textSize="15sp" />
 
 
-            <TextView
-                android:id="@+id/vote"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
+        <TextView
+            android:id="@+id/vote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
 
-                />
+            />
 
-            <Button
-                android:id="@+id/b11"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="FAVOURITE" />
-        </LinearLayout>
-
-
+        <Button
+            android:id="@+id/b11"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FAVOURITE" />
     </LinearLayout>
 
     <TextView
@@ -68,7 +68,7 @@
 
     <TextView
         android:id="@+id/plot_synopsis"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"

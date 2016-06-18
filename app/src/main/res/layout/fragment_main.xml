@@ -6,7 +6,7 @@
     android:clipToPadding="false"
     android:columnWidth="130dp"
     android:horizontalSpacing="5dp"
-    android:paddingTop="5dp"
+    android:padding="2dp"
     android:numColumns="auto_fit"
     android:scrollbarStyle="outsideOverlay"
     android:stretchMode="columnWidth"

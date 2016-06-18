@@ -1,6 +1,6 @@
 package com.example.varunbehl.moviestmdb;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -38,6 +38,9 @@ import rx.schedulers.Schedulers;
  */
 public class DetailActivityFragment extends Fragment {
 
+    public static final String TAG = DetailActivityFragment.class.getSimpleName();
+    static final String DETAIL_MOVIE = "DETAIL_MOVIE";
+
     static String API_KEY = "29c90a4aee629499a2149041cc6a0ffd";
     Videos videos = new Videos();
     Reviews review = new Reviews();
@@ -46,35 +49,68 @@ public class DetailActivityFragment extends Fragment {
     View rootMovieView, rootView;
     RetrofitManager retrofitManager;
     TextView review_text, trailer_text;
+    int mCurrentPosition = -1;
+
+    final static String ARG_POSITION = "position";
+
 
     public DetailActivityFragment() {
+//        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+//        review_text = (TextView) view.findViewById(R.id.review_text);
+        //if movie doesn't contain the comment make comment textView invisible
+
+        //register the retrofit for network call
+        retrofitManager = RetrofitManager.getInstance();
+
+
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        picture = getActivity().getIntent().getExtras().getParcelable("Pictures");
-
         retrofitManager = RetrofitManager.getInstance();
         rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         rootMovieView = inflater.inflate(R.layout.movie_detail, container, false);
 
-        getVideosData();
-        getReviewsData();
+        review_text=(TextView)rootView.findViewById(R.id.review_text) ;
+        trailer_text=(TextView)rootView.findViewById(R.id.trailer_text) ;
 
-        detailsAdapter = new DetailsAdapter(picture);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(detailsAdapter);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            picture = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
+            getVideosData();
+            getReviewsData();
 
+            detailsAdapter = new DetailsAdapter(picture);
+            RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(mLayoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(detailsAdapter);
+        }
 
         return rootView;
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
     public void getVideosData() {
 
@@ -86,6 +122,8 @@ public class DetailActivityFragment extends Fragment {
                 .subscribe(new Subscriber<Videos>() {
                     @Override
                     public void onCompleted() {
+                        trailer_text.setText("Trailers");
+
                         LinearLayout review_layout = (LinearLayout) rootView.findViewById(R.id.video_trailer);
                         for (final VideoResult videoResult : videos.getResults()) {
                             View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_movie_trailer,
@@ -126,9 +164,9 @@ public class DetailActivityFragment extends Fragment {
                 .subscribe(new Subscriber<Reviews>() {
                     @Override
                     public void onCompleted() {
+                        review_text.setText("Reviews");
 
                         LinearLayout review_layout = (LinearLayout) rootView.findViewById(R.id.review_comment);
-
 
 
                         for (ReviewsResult comment : review.getReviewsResults()) {
@@ -176,7 +214,6 @@ public class DetailActivityFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            Log.v("picture recieve", picture.toString());
             Picasso.with(getContext()).load("http://image.tmdb.org/t/p/w342" + picture.getPosterPath()).into(holder.iconView);
             holder.title.setText(picture.getTitle());
             holder.releaseDate.setText("Released Date:" + picture.getReleaseDate() + "");
