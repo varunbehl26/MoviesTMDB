@@ -26,8 +26,7 @@ import java.util.List;
 
 import Video.VideoResult;
 import Video.Videos;
-import reviews.Reviews;
-import reviews.ReviewsResult;
+import Reviews.*;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -49,35 +48,10 @@ public class DetailActivityFragment extends Fragment {
     View rootMovieView, rootView;
     RetrofitManager retrofitManager;
     TextView review_text, trailer_text;
-    int mCurrentPosition = -1;
-
-    final static String ARG_POSITION = "position";
-
 
     public DetailActivityFragment() {
-//        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-//        review_text = (TextView) view.findViewById(R.id.review_text);
-        //if movie doesn't contain the comment make comment textView invisible
-
-        //register the retrofit for network call
-        retrofitManager = RetrofitManager.getInstance();
-
-
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,22 +60,27 @@ public class DetailActivityFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         rootMovieView = inflater.inflate(R.layout.movie_detail, container, false);
 
-        review_text=(TextView)rootView.findViewById(R.id.review_text) ;
-        trailer_text=(TextView)rootView.findViewById(R.id.trailer_text) ;
+        review_text = (TextView) rootView.findViewById(R.id.review_text);
+        trailer_text = (TextView) rootView.findViewById(R.id.trailer_text);
 
         Bundle arguments = getArguments();
+
         if (arguments != null) {
             picture = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
-            getVideosData();
-            getReviewsData();
-
-            detailsAdapter = new DetailsAdapter(picture);
-            RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-            recyclerView.setLayoutManager(mLayoutManager);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setAdapter(detailsAdapter);
+        } else {
+            picture = (Pictures) getActivity().getIntent().getExtras().get(DetailActivityFragment.DETAIL_MOVIE);
         }
+
+
+        getVideosData();
+        getReviewsData();
+
+        detailsAdapter = new DetailsAdapter(picture);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(detailsAdapter);
 
         return rootView;
     }

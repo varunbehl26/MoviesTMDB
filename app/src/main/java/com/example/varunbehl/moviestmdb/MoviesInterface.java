@@ -1,6 +1,6 @@
 package com.example.varunbehl.moviestmdb;
 
-import reviews.Reviews;
+import Reviews.*;
 import Video.Videos;
 import retrofit2.Call;
 import retrofit2.http.GET;
