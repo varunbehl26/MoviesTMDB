@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Movies TMDB</string>
+    <string name="app_name">Stay Tuned</string>
     <string name="action_settings">Settings</string>
     <string name="action_sort_popular">Popular</string>
     <string name="action_sort_rating">Rating</string>

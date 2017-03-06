@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.varunbehl.moviestmdb.db2.MovieDetailContract;
-import com.squareup.picasso.Picasso;
 
 
 class ImageAdapter extends CursorAdapter {
@@ -30,12 +29,12 @@ class ImageAdapter extends CursorAdapter {
         imageView.setScaleType(ImageView.ScaleType.FIT_START);
 
 
-        if (!TextUtils.isEmpty(poster)) {
-            Picasso.with(context)
-                    .load("http://image.tmdb.org/t/p/w342" + MovieDetailContract.MovieEntry.POSTER_PATH)
-                    .placeholder(R.mipmap.ic_launcher)
-                    .into(imageView);
-        }
+//        if (!TextUtils.isEmpty(poster)) {
+//            Picasso.with(context)
+//                    .load("http://image.tmdb.org/t/p/w342" + MovieDetailContract.MovieEntry.POSTER_PATH)
+//                    .placeholder(R.mipmap.ic_launcher)
+//                    .into(imageView);
+//        }
         return imageView;
     }
 
@@ -54,12 +53,12 @@ class ImageAdapter extends CursorAdapter {
             imageView = (ImageView) view;
         }
 
-        if (!TextUtils.isEmpty(poster)) {
-            Picasso.with(context)
-                    .load("http://image.tmdb.org/t/p/w342" + poster)
-                    .placeholder(R.mipmap.ic_launcher)
-                    .into(imageView);
-        }
+//        if (!TextUtils.isEmpty(poster)) {
+//            Picasso.with(context)
+//                    .load("http://image.tmdb.org/t/p/w342" + poster)
+//                    .placeholder(R.mipmap.ic_launcher)
+//                    .into(imageView);
+//        }
 
 
     }

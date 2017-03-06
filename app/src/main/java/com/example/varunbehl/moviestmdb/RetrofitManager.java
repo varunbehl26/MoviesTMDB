@@ -2,6 +2,7 @@ package com.example.varunbehl.moviestmdb;
 
 import Video.Videos;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -21,9 +22,13 @@ public class RetrofitManager {
 
     private RetrofitManager() {
 
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(API_BASE_URL)
-                .client(new OkHttpClient())
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();

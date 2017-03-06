@@ -6,38 +6,49 @@ package com.example.varunbehl.moviestmdb;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
-class ImageAdapter_List extends ArrayAdapter<Pictures> {
+class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
     private final String IMAGE_POSTER_BASE_URL = "http://image.tmdb.org/t/p/w342";
     private List<Pictures> movieArrayList;
     private LayoutInflater inflater;
     private Context mContext;
 
-    public ImageAdapter_List(Context context, List<Pictures> objects) {
-        super(context, 0, objects);
+    DataAdapter(Context context, List<Pictures> objects) {
         this.mContext = context;
         this.movieArrayList = objects;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+
     @Override
-    public int getCount() {
-        return movieArrayList.size();
+    public DataAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View convertView = inflater.inflate(R.layout.movie_layout, parent, false);
+        return new ViewHolder(convertView);
     }
 
     @Override
-    public Pictures getItem(int position) {
-        return movieArrayList.get(position);
+    public void onBindViewHolder(DataAdapter.ViewHolder holder, final int position) {
+        holder.tvMovieTitle.setText(movieArrayList.get(position).getTitle());
+        holder.draweeView.setImageURI(getImageUri(movieArrayList.get(position).getPosterPath()));
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, DetailActivity.class)
+                        .putExtra(DetailActivityFragment.DETAIL_MOVIE, movieArrayList.get(position));
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -46,42 +57,22 @@ class ImageAdapter_List extends ArrayAdapter<Pictures> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        final Pictures movie = movieArrayList.get(position);
-        ViewHolder holder;
-        if (convertView != null) {
-            holder = (ViewHolder) convertView.getTag();
-        } else {
-            convertView = inflater.inflate(R.layout.movie_layout, parent, false);
-            holder = new ViewHolder(convertView);
-            convertView.setTag(holder);
-        }
-
-        holder.tvMovieTitle.setText(movie.getTitle());
-
-        holder.draweeView.setImageURI(getImageUri(movie.getPosterPath()));
-
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), DetailActivity.class)
-                        .putExtra(DetailActivityFragment.DETAIL_MOVIE, movie);
-                mContext.startActivity(intent);
-            }
-        });
-        return convertView;
+    public int getItemCount() {
+        return movieArrayList.size();
     }
 
-    public String getImageUri(String uri) {
+
+    private String getImageUri(String uri) {
         return IMAGE_POSTER_BASE_URL + "/" + uri;
     }
 
-    static class ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvMovieTitle;
         CardView cardView;
         SimpleDraweeView draweeView;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
+            super(itemView);
             tvMovieTitle = (TextView) itemView.findViewById(R.id.tv_movie_title);
             draweeView = (SimpleDraweeView) itemView.findViewById(R.id.img_movie_poster);
             cardView = (CardView) itemView.findViewById(R.id.card_view);

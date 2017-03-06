@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback_Pictures {
 
@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Fresco.initialize(this);
 
         if (findViewById(R.id.movie_detail_container) != null) {
             mTwoPane = true;
@@ -29,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         } else {
             mTwoPane = false;
         }
-
     }
 
 

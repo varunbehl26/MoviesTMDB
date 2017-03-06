@@ -1,54 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/cardview_dark_background"
+    android:fitsSystemWindows="true">
 
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="300dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/my_recycler_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical" />
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        <TextView
-            android:id="@+id/trailer_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp"
-            android:textSize="20sp" />
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/movie_poster"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                fresco:placeholderImage="@drawable/placeholder" />
 
-        <LinearLayout
-            android:id="@+id/video_trailer"
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nested_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/appBar"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/review_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp"
-            android:textSize="20sp" />
+            <android.support.v7.widget.CardView
+                android:id="@+id/titleCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff">
 
-        <LinearLayout
-            android:id="@+id/review_comment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+                <TextView
+                    android:id="@+id/plot_synopsis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#fff"
+                    android:maxLines="4"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Description"
+                    android:textColor="#000"
+                    android:textSize="20sp" />
+            </android.support.v7.widget.CardView>
 
-            />
-    </LinearLayout>
-</ScrollView>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:baselineAligned="false"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:weightSum="4">
+
+                        <TextView
+                            android:id="@+id/release_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Release Date"
+                            android:textColor="#000"
+                            android:textSize="20sp" />
+
+
+                        <TextView
+                            android:id="@+id/vote"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="vote"
+                            android:textColor="#000"
+                            android:textSize="20sp" />
+
+
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/b11"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/fav" />
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="250dp">
+
+                    <TextView
+                        android:id="@+id/trailer_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="10dp"
+                        android:text="Trailers"
+                        android:textColor="#000"
+                        android:textSize="20sp"
+                        android:visibility="gone" />
+
+
+                    <android.support.v17.leanback.widget.HorizontalGridView
+                        android:id="@+id/video_trailer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/trailer_text"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="center"
+                        android:numColumns="3"
+                        android:padding="2dp"
+                        android:stretchMode="columnWidth"
+                        android:verticalSpacing="5dp" />
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/review_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="10dp"
+                        android:text="Reviews"
+                        android:textColor="#000"
+                        android:textSize="20sp"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/review_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/review_text"
+                        android:orientation="vertical"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:visibility="gone" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</android.support.design.widget.CoordinatorLayout>
